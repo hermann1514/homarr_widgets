@@ -2,46 +2,123 @@
 
 Eigene Widgets für das Dashboard [Homarr](https://homarr.dev), im Format `homarr-custom-widget-v2` (Homarr 2.x).
 
-## Widgets
+## Enthaltene Widgets
 
-| Widget | Beschreibung | Version |
+| Widget | Was es zeigt | Version |
 |---|---|---|
 | [Nextcloud News](widgets/nextcloud-news/) | Ungelesene Artikel aus Nextcloud News, direkt als gelesen markierbar | 1.1.0 |
 | [Kopia Info](widgets/kopia-info/) | Status des Kopia-Backup-Servers: Repository, Quellen, letzter und nächster Snapshot | 1.0.0 |
 
-Jedes Widget hat einen eigenen Ordner mit README (Funktionen, Einrichtung, Anpassen) und Changelog.
+### Nextcloud News
+
+- Die 20 neuesten ungelesenen Artikel mit Feed-Name, Titel und Autor. Favoriten haben ein ★.
+- Button **Gelesen** an jedem Artikel und **Alle gelesen** für alle ungelesenen Artikel in Nextcloud.
+- Ein Klick auf den Titel öffnet den Artikel in einem neuen Tab.
+
+Mehr Details und Anpassungen: [README des Widgets](widgets/nextcloud-news/README.md)
+
+### Kopia Info
+
+- Badge **CONNECTED/OFFLINE** für das Repository und Anzahl der Backup-Quellen.
+- Eine Karte pro Quelle: Ergebnis des letzten Snapshots, Status, Größe und Zeitplan.
+- Zeitpunkt des letzten und des nächsten Snapshots in Ortszeit.
+
+Mehr Details und Anpassungen: [README des Widgets](widgets/kopia-info/README.md)
 
 ## Widget importieren
 
 1. In Homarr *Benutzerdefinierte Widgets → Import* wählen und die `.json`-Datei aus dem Widget-Ordner unverändert hochladen.
-2. Beim Widget über *⋯ → Quellen konfigurieren* die **Adresse deines Dienstes** und die **Zugangsdaten** eintragen. Die Zugangsdaten speichert Homarr verschlüsselt, sie sind nicht Teil der JSON-Datei.
+2. Beim Widget über *⋯ → Quellen konfigurieren* die **Adresse des Dienstes** und die **Zugangsdaten** eintragen.
 3. Das Widget zu einem Board hinzufügen.
 
-In den JSON-Dateien stehen nur Platzhalter-Adressen wie `https://service.example.com`. Die Adresse in den Widget-Einstellungen festzulegen erlaubt Homarr aus Sicherheitsgründen nicht.
+Homarr speichert die Zugangsdaten verschlüsselt. Sie sind nicht Teil der JSON-Datei. In den JSON-Dateien stehen nur Platzhalter-Adressen wie `https://kopia.example.com`. Aus Sicherheitsgründen lässt Homarr die Adresse nicht in den Widget-Einstellungen festlegen, sondern nur unter *Quellen konfigurieren*.
 
-Details stehen jeweils in der README des Widgets.
+## Konfiguration der Dienste
 
-## Repo-Aufbau
+Damit ein Widget Daten bekommt, muss der Dienst dahinter von Homarr aus erreichbar sein und die Abfrage zulassen.
 
-```text
-homarr_widgets/
-├── README.md            ← diese Übersicht
-├── CHANGELOG.md         ← Änderungen am Repo selbst
-├── _template/           ← Vorlage für neue Widgets
-└── widgets/
-    └── <widget-name>/
-        ├── <widget-name>.json
-        ├── README.md
-        └── CHANGELOG.md
+### Kopia
+
+Kopia muss im **Server-Modus** laufen. Das Widget fragt die API ab, die auch die Web-Oberfläche von Kopia nutzt. Es meldet sich mit demselben Benutzer und Passwort an wie die Web-Oberfläche.
+
+**Server mit Benutzer und Passwort starten**
+
+```sh
+kopia server start \
+  --address=0.0.0.0:51515 \
+  --tls-generate-cert \
+  --server-username=kopia \
+  --server-password=GEHEIM \
+  --disable-csrf-token-checks
 ```
 
-## Neues Widget anlegen
+- `--server-username` und `--server-password` legen die Zugangsdaten fest. Ohne `--server-username` heißt der Benutzer `kopia`.
+- `--tls-generate-cert` erzeugt beim ersten Start ein Zertifikat, damit die Verbindung über `https://` läuft. Bei späteren Starts das Zertifikat mit `--tls-cert-file` und `--tls-key-file` wieder angeben.
+- `--disable-csrf-token-checks` ist nötig, weil die Web-Oberfläche sonst ein Token verlangt, das Homarr nicht mitschickt. Ohne das Flag antwortet Kopia mit *403*.
 
-1. Den Ordner [`_template/`](_template/) nach `widgets/<widget-name>/` kopieren. Den Namen in Kleinbuchstaben mit Bindestrichen schreiben, z. B. `kopia-backups`.
-2. `widget.json` in `<widget-name>.json` umbenennen und in Homarr aufbauen. Oder ein bestehendes Widget in Homarr über *⋯ → Exportieren* sichern.
-3. **Vor dem Commit die `baseUrl` durch einen Platzhalter ersetzen**, z. B. `https://service.example.com`. Das Repo ist öffentlich, und die echte Adresse wird ohnehin in Homarr unter *Quellen konfigurieren* eingetragen.
-4. README und CHANGELOG im Widget-Ordner ausfüllen und das Widget oben in die Tabelle eintragen.
-5. Optional eine Version taggen: `git tag <widget-name>-v1.0.0`.
+**Beispiel mit Docker Compose**
+
+```yaml
+services:
+  kopia:
+    image: kopia/kopia:latest
+    command:
+      - server
+      - start
+      - --address=0.0.0.0:51515
+      - --tls-cert-file=/app/config/kopia.cert
+      - --tls-key-file=/app/config/kopia.key
+      - --server-username=kopia
+      - --disable-csrf-token-checks
+    environment:
+      KOPIA_PASSWORD: "Passwort des Repositorys"
+      KOPIA_SERVER_PASSWORD: "GEHEIM"
+    ports:
+      - "51515:51515"
+    volumes:
+      - ./config:/app/config
+      - ./cache:/app/cache
+      - ./repository:/repository
+```
+
+`KOPIA_PASSWORD` ist das Passwort des Repositorys. `KOPIA_SERVER_PASSWORD` ist das Passwort für die Anmeldung an der Web-Oberfläche, und nur das braucht das Widget.
+
+**In Homarr unter *Quellen konfigurieren***
+
+| Feld | Wert |
+|---|---|
+| Adresse | `https://<host>:51515` |
+| Authentifizierung | *Basic* (Voreinstellung) |
+| Benutzername | Wert von `--server-username`, Standard `kopia` |
+| Passwort | Wert von `--server-password` bzw. `KOPIA_SERVER_PASSWORD` |
+
+**Gut zu wissen**
+
+- **Ohne Passwort:** Läuft Kopia mit `--without-password`, die Authentifizierung auf *None* stellen. Lässt Homarr das nicht zu, *Basic* behalten und beliebige Werte eintragen. Kopia prüft sie dann nicht.
+- **Ohne TLS:** Für `http://` muss Kopia mit `--insecure` laufen. Benutzer und Passwort gehen dann unverschlüsselt durchs Netz. Das ist nur im eigenen Netz vertretbar.
+- **Nicht verwechseln:** Benutzer, die mit `kopia server user add` angelegt werden, sind für Kopia-Clients gedacht, die ihre Backups auf diesen Server schreiben. Für das Widget gelten sie nicht. Es braucht die Zugangsdaten der Web-Oberfläche.
+
+### Nextcloud News
+
+**In Nextcloud vorbereiten**
+
+1. Die App **News** aus dem Nextcloud-App-Store installieren und Feeds hinzufügen.
+2. Unter *Verwaltung → Grundeinstellungen → Hintergrund-Aufgaben* **Cron** wählen und einen Cronjob einrichten. Sonst aktualisiert Nextcloud die Feeds nur selten.
+3. Ein **App-Passwort** erstellen: *Einstellungen → Sicherheit → Neues App-Passwort erstellen*. Das App-Passwort lässt sich jederzeit widerrufen, ohne dass sich das normale Passwort ändert.
+
+**In Homarr unter *Quellen konfigurieren***
+
+| Feld | Wert |
+|---|---|
+| Adresse | Adresse der Nextcloud ohne `/` am Ende, z. B. `https://cloud.example.com` |
+| Authentifizierung | *Basic* (Voreinstellung) |
+| Benutzername | Nextcloud-Benutzername |
+| Passwort | das App-Passwort |
+
+**Gut zu wissen**
+
+- Meldet Homarr beim Markieren einen Fehler *405*, in der JSON-Datei bei `markRead` und `markAllRead` die `method` von `POST` auf `PUT` ändern.
+- Homarr erlaubt höchstens 10 Aktionen pro Minute und Nutzer. Das betrifft die Buttons zum Markieren.
 
 ## Lizenz
 
