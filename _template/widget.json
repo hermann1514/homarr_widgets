@@ -1,0 +1,25 @@
+{
+  "$schema": "homarr-custom-widget-v2",
+  "name": "Mein Widget",
+  "iconUrl": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/homarr.svg",
+  "sources": {
+    "default": {
+      "name": "Mein Dienst",
+      "baseUrl": "https://service.example.com",
+      "auth": "none"
+    }
+  },
+  "requests": {
+    "status": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/status",
+      "trigger": "load",
+      "auth": "inherit",
+      "permission": "view"
+    }
+  },
+  "options": {},
+  "template": "<Stack gap=\"sm\" p=\"sm\"><Group justify=\"space-between\" wrap=\"nowrap\"><Text fw={700}>Mein Widget</Text><RefreshButton /></Group>{status.status?.loading ? <Skeleton height={80} radius=\"md\" /> : status.status?.error ? <Alert color=\"orange\">{status.status.error}</Alert> : <Text size=\"sm\">{data.status?.name ?? \"Daten geladen\"}</Text>}</Stack>"
+}
