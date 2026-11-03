@@ -7,6 +7,7 @@
 ### Hinzugefügt
 - Ordnerstruktur `widgets/<widget-name>/` mit eigener README und eigenem Changelog pro Widget.
 - Vorlage [`_template/`](_template/) für neue Widgets.
+- Widget **Kopia Info** in [`widgets/kopia-info/`](widgets/kopia-info/).
 - Übersicht aller Widgets und Anleitung zum Anlegen neuer Widgets in der [README](README.md).
 
 ### Geändert

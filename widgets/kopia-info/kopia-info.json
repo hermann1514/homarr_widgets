@@ -1,0 +1,35 @@
+{
+  "$schema": "homarr-custom-widget-v2",
+  "name": "Kopia Backups",
+  "iconUrl": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/kopia.svg",
+  "sources": {
+    "default": {
+      "name": "Kopia",
+      "baseUrl": "https://kopia.example.com",
+      "networkScope": "private",
+      "auth": "basic"
+    }
+  },
+  "requests": {
+    "sources": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/v1/sources",
+      "trigger": "load",
+      "auth": "inherit",
+      "permission": "view"
+    },
+    "repo": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/v1/repo/status",
+      "trigger": "load",
+      "auth": "inherit",
+      "permission": "view"
+    }
+  },
+  "options": {},
+  "template": "<Stack gap=\"sm\" p=\"sm\"><Group justify=\"space-between\" wrap=\"nowrap\"><Group gap=\"xs\" wrap=\"nowrap\"><Image src=\"https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/kopia.svg\" w={28} h={28} /><Stack gap={0}><Text fw={700} size=\"md\">Kopia Backups</Text><Text size=\"xs\" c=\"dimmed\">{(data.sources?.localUsername ?? \"?\") + \"@\" + (data.sources?.localHost ?? \"?\")}</Text></Stack></Group><RefreshButton /></Group>{status.sources?.loading || status.repo?.loading ? <Skeleton height={220} radius=\"md\" /> : status.sources?.error ? <Alert color=\"red\">{status.sources.error}</Alert> : status.repo?.error ? <Alert color=\"red\">{status.repo.error}</Alert> : <><Group justify=\"space-between\"><Badge color={data.repo?.connected ? \"green\" : \"red\"} variant=\"light\" size=\"md\" radius=\"sm\">{data.repo?.connected ? \"● CONNECTED\" : \"● OFFLINE\"}</Badge><Badge color=\"blue\" variant=\"light\" size=\"md\" radius=\"sm\">{(data.sources?.sources?.length ?? 0) + \" Quellen\"}</Badge></Group>{(data.sources?.sources?.length ?? 0) === 0 ? <Text ta=\"center\" c=\"dimmed\" size=\"sm\">Keine Backup-Quellen</Text> : <Stack gap=\"xs\">{data.sources.sources.map((item) => <Card key={item.source.host + item.source.userName + item.source.path} withBorder radius=\"md\" padding=\"sm\" shadow=\"sm\"><Stack gap={6}><Group justify=\"space-between\" wrap=\"nowrap\"><Text fw={700} size=\"sm\" truncate>{item.source.path}</Text><Badge size=\"sm\" variant=\"filled\" color={!item.lastSnapshot ? \"gray\" : (item.lastSnapshot?.stats?.errorCount ?? 0) > 0 ? \"orange\" : \"green\"}>{!item.lastSnapshot ? \"KEIN SNAPSHOT\" : (item.lastSnapshot?.stats?.errorCount ?? 0) > 0 ? (item.lastSnapshot.stats.errorCount + \" Fehler\") : \"OK\"}</Badge></Group><Group gap=\"xs\"><Badge size=\"xs\" variant=\"outline\" color=\"gray\" tt=\"none\">{item.source.userName + \"@\" + item.source.host}</Badge><Badge size=\"xs\" variant=\"light\" color={item.status === \"UPLOADING\" ? \"blue\" : item.status === \"FAILED\" ? \"red\" : \"gray\"}>{item.status ?? \"?\"}</Badge></Group><Group justify=\"space-between\"><Text size=\"xs\" c=\"dimmed\">💾 Größe</Text><Text size=\"xs\" fw={600}>{!item.lastSnapshot ? \"–\" : (item.lastSnapshot?.stats?.totalSize ?? 0) >= 1099511627776 ? ((item.lastSnapshot?.stats?.totalSize ?? 0) / 1099511627776).toFixed(2).replace(\".\", \",\") + \" TiB\" : (item.lastSnapshot?.stats?.totalSize ?? 0) >= 1073741824 ? ((item.lastSnapshot?.stats?.totalSize ?? 0) / 1073741824).toFixed(1).replace(\".\", \",\") + \" GiB\" : ((item.lastSnapshot?.stats?.totalSize ?? 0) / 1048576).toFixed(1).replace(\".\", \",\") + \" MiB\"}</Text></Group><Group justify=\"space-between\"><Text size=\"xs\" c=\"dimmed\">⏰ Zeitplan</Text><Text size=\"xs\" fw={600}>{[(item.schedule?.timeOfDay ?? []).length > 0 ? item.schedule.timeOfDay.map((t) => String(t.hour).padStart(2, \"0\") + \":\" + String(t.min ?? 0).padStart(2, \"0\")).join(\", \") + \" Uhr\" : \"\", (item.schedule?.intervalSeconds ?? 0) > 0 ? (item.schedule.intervalSeconds % 3600 === 0 ? \"alle \" + (item.schedule.intervalSeconds / 3600) + \" h\" : \"alle \" + (item.schedule.intervalSeconds / 60).toFixed(0) + \" min\") : \"\", (item.schedule?.cron ?? []).length > 0 ? \"Cron \" + item.schedule.cron.join(\", \") : \"\"].filter((s) => s !== \"\").join(\" · \") || \"manuell\"}</Text></Group><Group justify=\"space-between\"><Text size=\"xs\" c=\"dimmed\">🕒 Letzter</Text><Text size=\"xs\" fw={600}>{item.lastSnapshot?.endTime ? Date.toLocaleString(item.lastSnapshot.endTime, \"de-DE\", \"Europe/Berlin\") : \"nie\"}</Text></Group><Group justify=\"space-between\"><Text size=\"xs\" c=\"dimmed\">⏭ Nächster</Text><Text size=\"xs\" fw={600}>{item.nextSnapshotTime ? Date.toLocaleString(item.nextSnapshotTime, \"de-DE\", \"Europe/Berlin\") : \"–\"}</Text></Group></Stack></Card>)}</Stack>}</>}</Stack>"
+}
