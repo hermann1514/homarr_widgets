@@ -5,6 +5,11 @@ Alle nennenswerten Änderungen an diesem Widget werden in dieser Datei dokumenti
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 die Versionierung an [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.0] – 2026-11-05
+
+### Geändert
+- Der Button im Kopfbereich heißt jetzt **„Angezeigte gelesen“** und markiert nur noch die im Widget angezeigten Artikel als gelesen (Request `markShownRead`, `POST /items/read/multiple`). Bisher markierte **„Alle gelesen“** alle ungelesenen Artikel in Nextcloud.
+
 ## [1.1.0] – 2026-11-03
 
 ### Hinzugefügt

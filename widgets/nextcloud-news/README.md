@@ -4,20 +4,20 @@
 
 Zeigt die **20 neuesten ungelesenen Artikel** aus der [Nextcloud-News-App](https://apps.nextcloud.com/apps/news) auf deinem Homarr-Board.
 
-**Datei:** [`nextcloud-news.json`](nextcloud-news.json) · **Version:** 1.1.0 · [Changelog](CHANGELOG.md)
+**Datei:** [`nextcloud-news.json`](nextcloud-news.json) · **Version:** 1.2.0 · [Changelog](CHANGELOG.md)
 
 ## Funktionen
 
 - **Artikelliste:** Jeder Eintrag zeigt Feed-Name, Titel und Autor. Favoriten haben ein ★.
 - **Artikel öffnen:** Ein Klick auf den Titel öffnet den Artikel in einem neuen Tab.
 - **„Gelesen“** an jedem Eintrag: markiert den Artikel in Nextcloud als gelesen. Danach rückt automatisch der nächste ungelesene Artikel nach.
-- **„Alle gelesen“** im Kopfbereich: markiert nach einer Rückfrage **alle** ungelesenen Artikel in Nextcloud als gelesen, nicht nur die angezeigten 20.
+- **„Angezeigte gelesen“** im Kopfbereich: markiert nach einer Rückfrage **nur die angezeigten** Artikel in Nextcloud als gelesen. Weitere ungelesene Artikel rücken danach nach.
 - **Aktualisieren** über den Button im Kopfbereich.
 - **Robuste Anzeige:** Ladeanimation, Fehlermeldung bei Verbindungsproblemen und ein Hinweis, wenn alles gelesen ist.
 
 ```text
 ┌─────────────────────────────────────────────┐
-│ ☁ Nextcloud News        [✓ Alle gelesen] ⟳ │
+│ ☁ Nextcloud News  [✓ Angezeigte gelesen] ⟳ │
 │   Ungelesene Einträge                       │
 ├─────────────────────────────────────────────┤
 │ heise online                   ★ [✓ Gelesen]│
@@ -52,14 +52,14 @@ Zeigt die **20 neuesten ungelesenen Artikel** aus der [Nextcloud-News-App](https
 | Anzahl der Einträge | `requests.items.query.batchSize` | `20` |
 | Auch gelesene Artikel anzeigen | `requests.items.query.getRead` auf `true` (dann den Untertitel im `template` anpassen) | `false` |
 | Farbe der Titel | `c="blue.4"` am `Anchor` im `template` (beliebige [Mantine-Farbe](https://mantine.dev/theming/colors/)) | `blue.4` |
-| Wer markieren darf | `permission` bei `markRead` / `markAllRead`. `view` erlaubt es allen Board-Nutzern; ohne den Eintrag sind Bearbeitungsrechte nötig | `view` |
+| Wer markieren darf | `permission` bei `markRead` / `markShownRead`. `view` erlaubt es allen Board-Nutzern; ohne den Eintrag sind Bearbeitungsrechte nötig | `view` |
 
 ## Gut zu wissen
 
 - **Kein automatisches Markieren beim Scrollen:** Homarrs Widget-Runtime erlaubt aus Sicherheitsgründen keine Scroll- oder Sichtbarkeits-Events. Markieren geht deshalb nur über die Buttons.
 - **Kein Veröffentlichungsdatum:** Die Template-Runtime erlaubt keine `new Date(...)`-Ausdrücke.
 - **Limit für Aktionen:** Homarr erlaubt höchstens 10 Aktionen pro Minute und Nutzer.
-- **POST oder PUT:** Die Buttons nutzen `POST` auf die Nextcloud-News-API `v1-3`. Meldet Homarr beim Markieren einen Fehler 405, stelle `method` bei `markRead` und `markAllRead` auf `PUT` um.
+- **POST oder PUT:** Die Buttons nutzen `POST` auf die Nextcloud-News-API `v1-3`. Meldet Homarr beim Markieren einen Fehler 405, stelle `method` bei `markRead` und `markShownRead` auf `PUT` um.
 
 ## Verwendete API-Endpunkte
 
@@ -68,7 +68,7 @@ Zeigt die **20 neuesten ungelesenen Artikel** aus der [Nextcloud-News-App](https
 | `items` | GET | `/index.php/apps/news/api/v1-3/items` |
 | `feeds` | GET | `/index.php/apps/news/api/v1-3/feeds` |
 | `markRead` | POST | `/index.php/apps/news/api/v1-3/items/{id}/read` |
-| `markAllRead` | POST | `/index.php/apps/news/api/v1-3/items/read` |
+| `markShownRead` | POST | `/index.php/apps/news/api/v1-3/items/read/multiple` |
 
 ---
 

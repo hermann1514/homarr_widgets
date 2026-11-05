@@ -6,13 +6,14 @@ Eigene Widgets für das Dashboard [Homarr](https://homarr.dev), im Format `homar
 
 | Widget | Was es zeigt | Version |
 |---|---|---|
-| [Nextcloud News](widgets/nextcloud-news/) | Ungelesene Artikel aus Nextcloud News, direkt als gelesen markierbar | 1.1.0 |
+| [Nextcloud News](widgets/nextcloud-news/) | Ungelesene Artikel aus Nextcloud News, direkt als gelesen markierbar | 1.2.0 |
 | [Kopia Info](widgets/kopia-info/) | Status des Kopia-Backup-Servers: Repository, Quellen, letzter und nächster Snapshot | 1.0.0 |
+| [Karakeep](widgets/karakeep/) | Die neuesten Lesezeichen aus Karakeep | 1.0.0 |
 
 ### Nextcloud News
 
 - Die 20 neuesten ungelesenen Artikel mit Feed-Name, Titel und Autor. Favoriten haben ein ★.
-- Button **Gelesen** an jedem Artikel und **Alle gelesen** für alle ungelesenen Artikel in Nextcloud.
+- Button **Gelesen** an jedem Artikel und **Angezeigte gelesen** für alle im Widget angezeigten Artikel.
 - Ein Klick auf den Titel öffnet den Artikel in einem neuen Tab.
 
 Mehr Details und Anpassungen: [README des Widgets](widgets/nextcloud-news/README.md)
@@ -24,6 +25,13 @@ Mehr Details und Anpassungen: [README des Widgets](widgets/nextcloud-news/README
 - Zeitpunkt des letzten und des nächsten Snapshots in Ortszeit.
 
 Mehr Details und Anpassungen: [README des Widgets](widgets/kopia-info/README.md)
+
+### Karakeep
+
+- Die 5 neuesten nicht archivierten Lesezeichen mit Vorschaubild, Titel, Beschreibung und Datum.
+- Ein Klick öffnet den Link in einem neuen Tab. Notizen zeigen ihren Text als Vorschau.
+
+Mehr Details und Anpassungen: [README des Widgets](widgets/karakeep/README.md)
 
 ## Widget importieren
 
@@ -117,8 +125,20 @@ services:
 
 **Gut zu wissen**
 
-- Meldet Homarr beim Markieren einen Fehler *405*, in der JSON-Datei bei `markRead` und `markAllRead` die `method` von `POST` auf `PUT` ändern.
+- Meldet Homarr beim Markieren einen Fehler *405*, in der JSON-Datei bei `markRead` und `markShownRead` die `method` von `POST` auf `PUT` ändern.
 - Homarr erlaubt höchstens 10 Aktionen pro Minute und Nutzer. Das betrifft die Buttons zum Markieren.
+
+### Karakeep
+
+**In Karakeep vorbereiten:** Unter *Einstellungen → API-Schlüssel* einen neuen Schlüssel erstellen.
+
+**In Homarr unter *Quellen konfigurieren***
+
+| Feld | Wert |
+|---|---|
+| Adresse | Adresse von Karakeep ohne `/` am Ende, z. B. `https://karakeep.example.com` |
+| Authentifizierung | *Bearer* (Voreinstellung) |
+| Token | der API-Schlüssel |
 
 ## Lizenz
 

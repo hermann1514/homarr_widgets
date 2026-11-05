@@ -43,13 +43,13 @@
       "permission": "view",
       "invalidates": ["items"]
     },
-    "markAllRead": {
+    "markShownRead": {
       "source": "default",
       "kind": "action",
       "method": "POST",
-      "path": "/index.php/apps/news/api/v1-3/items/read",
+      "path": "/index.php/apps/news/api/v1-3/items/read/multiple",
       "body": {
-        "newestItemId": { "$param": "newestItemId" }
+        "itemIds": { "$param": "itemIds" }
       },
       "auth": "inherit",
       "permission": "view",
@@ -57,5 +57,5 @@
     }
   },
   "options": {},
-  "template": "<Stack gap=\"sm\" p=\"sm\"><Group justify=\"space-between\" wrap=\"nowrap\"><Group gap=\"xs\" wrap=\"nowrap\"><Image src=\"https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextcloud.svg\" w={28} h={28} /><Stack gap={0}><Text fw={700} size=\"md\">Nextcloud News</Text><Text size=\"xs\" c=\"dimmed\">Ungelesene Einträge</Text></Stack></Group><Group gap=\"xs\" wrap=\"nowrap\">{(data.items?.items?.length ?? 0) > 0 ? <ActionButton requestId=\"markAllRead\" params={{ newestItemId: data.items.items[0].id }} label=\"Alle gelesen\" icon=\"check\" variant=\"light\" color=\"blue\" size=\"xs\" confirmMessage=\"Alle ungelesenen Einträge als gelesen markieren?\" successMessage=\"Alle als gelesen markiert\" /> : null}<RefreshButton /></Group></Group>{status.items?.loading || status.feeds?.loading ? <Skeleton height={300} radius=\"md\" /> : status.items?.error ? <Alert color=\"red\">{status.items.error}</Alert> : (data.items?.items?.length ?? 0) === 0 ? <Text ta=\"center\" c=\"dimmed\" size=\"sm\">Keine ungelesenen Einträge 🎉</Text> : <Stack gap=\"xs\">{data.items.items.map((item) => <Card key={item.id} withBorder radius=\"md\" padding=\"xs\" shadow=\"sm\"><Stack gap={2}><Group justify=\"space-between\" wrap=\"nowrap\"><Text size=\"xs\" c=\"dimmed\" truncate>{data.feeds?.feeds?.find((f) => f.id === item.feedId)?.title ?? \"Feed\"}</Text><Group gap={4} wrap=\"nowrap\">{item.starred ? <Badge size=\"xs\" color=\"yellow\" variant=\"light\">★</Badge> : null}<ActionButton requestId=\"markRead\" params={{ id: item.id }} label=\"Gelesen\" icon=\"check\" variant=\"subtle\" color=\"gray\" size=\"xs\" /></Group></Group><Anchor href={item.url} target=\"_blank\" rel=\"noopener noreferrer\" c=\"blue.4\" underline=\"hover\" size=\"sm\" fw={600} lineClamp={2}>{item.title}</Anchor>{item.author ? <Text size=\"xs\" c=\"dimmed\" truncate>{item.author}</Text> : null}</Stack></Card>)}</Stack>}</Stack>"
+  "template": "<Stack gap=\"sm\" p=\"sm\"><Group justify=\"space-between\" wrap=\"nowrap\"><Group gap=\"xs\" wrap=\"nowrap\"><Image src=\"https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextcloud.svg\" w={28} h={28} /><Stack gap={0}><Text fw={700} size=\"md\">Nextcloud News</Text><Text size=\"xs\" c=\"dimmed\">Ungelesene Einträge</Text></Stack></Group><Group gap=\"xs\" wrap=\"nowrap\">{(data.items?.items?.length ?? 0) > 0 ? <ActionButton requestId=\"markShownRead\" params={{ itemIds: data.items.items.map((i) => i.id) }} label=\"Angezeigte gelesen\" icon=\"check\" variant=\"light\" color=\"blue\" size=\"xs\" confirmMessage=\"Die angezeigten Einträge als gelesen markieren?\" successMessage=\"Angezeigte als gelesen markiert\" /> : null}<RefreshButton /></Group></Group>{status.items?.loading || status.feeds?.loading ? <Skeleton height={300} radius=\"md\" /> : status.items?.error ? <Alert color=\"red\">{status.items.error}</Alert> : (data.items?.items?.length ?? 0) === 0 ? <Text ta=\"center\" c=\"dimmed\" size=\"sm\">Keine ungelesenen Einträge 🎉</Text> : <Stack gap=\"xs\">{data.items.items.map((item) => <Card key={item.id} withBorder radius=\"md\" padding=\"xs\" shadow=\"sm\"><Stack gap={2}><Group justify=\"space-between\" wrap=\"nowrap\"><Text size=\"xs\" c=\"dimmed\" truncate>{data.feeds?.feeds?.find((f) => f.id === item.feedId)?.title ?? \"Feed\"}</Text><Group gap={4} wrap=\"nowrap\">{item.starred ? <Badge size=\"xs\" color=\"yellow\" variant=\"light\">★</Badge> : null}<ActionButton requestId=\"markRead\" params={{ id: item.id }} label=\"Gelesen\" icon=\"check\" variant=\"subtle\" color=\"gray\" size=\"xs\" /></Group></Group><Anchor href={item.url} target=\"_blank\" rel=\"noopener noreferrer\" c=\"blue.4\" underline=\"hover\" size=\"sm\" fw={600} lineClamp={2}>{item.title}</Anchor>{item.author ? <Text size=\"xs\" c=\"dimmed\" truncate>{item.author}</Text> : null}</Stack></Card>)}</Stack>}</Stack>"
 }

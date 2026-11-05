@@ -1,0 +1,30 @@
+{
+  "$schema": "homarr-custom-widget-v2",
+  "name": "Karakeep",
+  "iconUrl": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/karakeep.svg",
+  "sources": {
+    "default": {
+      "name": "Karakeep",
+      "baseUrl": "https://karakeep.example.com",
+      "networkScope": "private",
+      "auth": "bearer"
+    }
+  },
+  "requests": {
+    "items": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/v1/bookmarks",
+      "trigger": "load",
+      "query": {
+        "limit": 5,
+        "archived": false
+      },
+      "auth": "inherit",
+      "permission": "view"
+    }
+  },
+  "options": {},
+  "template": "<Stack gap=\"sm\" p=\"sm\"><Group justify=\"space-between\" wrap=\"nowrap\"><Group gap=\"xs\" wrap=\"nowrap\"><Image src=\"https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/karakeep.svg\" w={28} h={28} /><Stack gap={0}><Text fw={700} size=\"md\">Karakeep</Text><Text size=\"xs\" c=\"dimmed\">Neueste Lesezeichen</Text></Stack></Group><RefreshButton /></Group>{status.items?.loading ? <Skeleton height={220} radius=\"md\" /> : status.items?.error ? <Alert color=\"red\">{status.items.error}</Alert> : (data.items?.bookmarks?.length ?? 0) === 0 ? <Text ta=\"center\" c=\"dimmed\" size=\"sm\">Keine Einträge</Text> : <Stack gap=\"xs\">{data.items.bookmarks.map((item) => <Anchor key={item.id} href={item.content?.type === \"link\" ? item.content.url : undefined} target=\"_blank\" rel=\"noopener noreferrer\" underline=\"never\" c=\"inherit\"><Card withBorder radius=\"md\" padding=\"xs\" shadow=\"sm\"><Group gap=\"sm\" wrap=\"nowrap\"><Image src={item.content?.imageUrl || item.content?.favicon || \"https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/karakeep.svg\"} w={48} h={48} radius=\"sm\" fit=\"cover\" fallbackSrc=\"https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/karakeep.svg\" /><Stack gap={0} flex={1} miw={0}><Text size=\"sm\" fw={600} truncate>{item.title || item.content?.title || item.content?.fileName || (item.content?.type === \"text\" ? \"Notiz\" : \"Ohne Titel\")}</Text><Text size=\"xs\" c=\"dimmed\" lineClamp={2}>{item.content?.description || item.content?.text || \"-\"}</Text><Text size=\"xs\" c=\"dimmed\">{item.createdAt ? Date.toLocaleString(item.createdAt, \"de-DE\", \"Europe/Berlin\") : \"\"}</Text></Stack></Group></Card></Anchor>)}</Stack>}</Stack>"
+}
