@@ -9,6 +9,7 @@ Eigene Widgets für das Dashboard [Homarr](https://homarr.dev), im Format `homar
 | [Nextcloud News](widgets/nextcloud-news/) | Ungelesene Artikel aus Nextcloud News, direkt als gelesen markierbar | 1.2.1 |
 | [Kopia Info](widgets/kopia-info/) | Status des Kopia-Backup-Servers: Repository, Quellen, letzter und nächster Snapshot | 1.0.0 |
 | [Karakeep](widgets/karakeep/) | Die neuesten Lesezeichen aus Karakeep | 1.0.0 |
+| [Claude Usage](widgets/claude-usage/) | Verbrauch des Claude-Abos: Session-, Wochen- und Modell-Limit, über Home Assistant | 1.0.0 |
 
 ### Nextcloud News
 
@@ -32,6 +33,14 @@ Mehr Details und Anpassungen: [README des Widgets](widgets/kopia-info/README.md)
 - Ein Klick öffnet den Link in einem neuen Tab. Notizen zeigen ihren Text als Vorschau.
 
 Mehr Details und Anpassungen: [README des Widgets](widgets/karakeep/README.md)
+
+### Claude Usage
+
+- Balken für das Session-Limit (5 h), das Wochenlimit aller Modelle und das Wochenlimit eines Modells, mit Countdown bis zum Reset.
+- Tempo-Vergleich: Verbrauch gegenüber der schon vergangenen Zeit des Zeitfensters.
+- Extra Usage, wenn aktiviert, und Hinweis bei API-Fehlern.
+
+Mehr Details und Anpassungen: [README des Widgets](widgets/claude-usage/README.md)
 
 ## Widget importieren
 
@@ -139,6 +148,24 @@ services:
 | Adresse | Adresse von Karakeep ohne `/` am Ende, z. B. `https://karakeep.example.com` |
 | Authentifizierung | *Bearer* (Voreinstellung) |
 | Token | der API-Schlüssel |
+
+### Claude Usage (über Home Assistant)
+
+Homarr kann die OAuth-Tokens von Anthropic nicht selbst erneuern. Deshalb holt die Integration [hass-claude-usage](https://github.com/trickv/hass-claude-usage) in Home Assistant die Daten, und das Widget liest deren Sensoren.
+
+**In Home Assistant vorbereiten**
+
+1. **hass-claude-usage** über HACS installieren, die Integration *Claude Usage* hinzufügen und per OAuth bei Claude anmelden. Das Abfrageintervall auf 300 Sekunden lassen, sonst sperrt Anthropic die Usage-API für etwa 24 Stunden.
+2. Unter *Profil → Sicherheit → Langlebige Zugangs-Token* ein Token erstellen.
+3. Unter *Einstellungen → Entitäten* nach `claude` suchen und das Präfix der Sensoren ablesen, z. B. `claude_usage_my_account` aus `sensor.claude_usage_my_account_session_limit_usage`. Es kommt in die Widget-Option *Präfix der Sensoren*.
+
+**In Homarr unter *Quellen konfigurieren***
+
+| Feld | Wert |
+|---|---|
+| Adresse | Adresse von Home Assistant ohne `/` am Ende, z. B. `https://homeassistant.example.com` |
+| Authentifizierung | *Bearer* (Voreinstellung) |
+| Token | das langlebige Zugangs-Token |
 
 ## Lizenz
 

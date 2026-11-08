@@ -2,6 +2,11 @@
 
 Änderungen am Aufbau des Repos. Änderungen an einzelnen Widgets stehen im jeweiligen `widgets/<widget-name>/CHANGELOG.md`.
 
+## 2026-11-07
+
+### Hinzugefügt
+- Widget **Claude Usage** in [`widgets/claude-usage/`](widgets/claude-usage/).
+
 ## 2026-11-04
 
 ### Hinzugefügt

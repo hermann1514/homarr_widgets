@@ -1,0 +1,80 @@
+{
+  "$schema": "homarr-custom-widget-v2",
+  "name": "Claude Usage",
+  "iconUrl": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/claude-ai.svg",
+  "sources": {
+    "default": {
+      "name": "Home Assistant",
+      "baseUrl": "https://homeassistant.example.com",
+      "networkScope": "private",
+      "auth": "bearer"
+    }
+  },
+  "requests": {
+    "session": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/states/sensor.{option:prefix}_session_limit_usage",
+      "trigger": "load",
+      "cacheSeconds": 60,
+      "auth": "inherit",
+      "permission": "view"
+    },
+    "weekly": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/states/sensor.{option:prefix}_weekly_all_models_limit_usage",
+      "trigger": "load",
+      "cacheSeconds": 60,
+      "auth": "inherit",
+      "permission": "view"
+    },
+    "model": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/states/sensor.{option:prefix}_weekly_{option:modelLimit}_limit_usage",
+      "trigger": "load",
+      "cacheSeconds": 60,
+      "auth": "inherit",
+      "permission": "view"
+    },
+    "extra": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/states/sensor.{option:prefix}_extra_usage",
+      "trigger": "load",
+      "cacheSeconds": 60,
+      "auth": "inherit",
+      "permission": "view"
+    },
+    "apiError": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/states/sensor.{option:prefix}_api_error",
+      "trigger": "load",
+      "cacheSeconds": 60,
+      "auth": "inherit",
+      "permission": "view"
+    }
+  },
+  "options": {
+    "prefix": {
+      "label": "Präfix der Sensoren",
+      "description": "Entity-ID ohne „sensor.“ und ohne Endung, z. B. claude_usage_my_account aus sensor.claude_usage_my_account_session_limit_usage",
+      "control": "text",
+      "default": "claude_usage_my_account"
+    },
+    "modelLimit": {
+      "label": "Modell-Limit",
+      "description": "Modellteil des Wochenlimits pro Modell, z. B. sonnet oder opus. Leer lassen, um die Zeile auszublenden.",
+      "control": "text",
+      "default": "sonnet"
+    }
+  },
+  "template": "<Stack gap=\"sm\" p=\"sm\"><Group justify=\"space-between\" wrap=\"nowrap\"><Group gap=\"xs\" wrap=\"nowrap\"><Image src=\"https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/claude-ai.svg\" w={28} h={28} /><Stack gap={0}><Text fw={700} size=\"md\">Claude Usage</Text><Text size=\"xs\" c=\"dimmed\">Abo-Verbrauch</Text></Stack></Group><RefreshButton /></Group>{data.apiError?.state === \"1\" ? <Alert color=\"orange\">Die Integration meldet einen API-Fehler. Die Werte sind evtl. veraltet.</Alert> : null}{status.session?.loading || status.weekly?.loading ? <Skeleton height={220} radius=\"md\" />: status.session?.error ? <Alert color=\"red\">{status.session?.status === 404 ? \"Sensor sensor.\" + options.prefix + \"_session_limit_usage nicht gefunden – Präfix prüfen\" : status.session.error}</Alert>: status.weekly?.error ? <Alert color=\"red\">{status.weekly?.status === 404 ? \"Sensor sensor.\" + options.prefix + \"_weekly_all_models_limit_usage nicht gefunden – Präfix prüfen\" : status.weekly.error}</Alert>: !isFinite(parseFloat(data.session?.state)) ? <Alert color=\"gray\">Die Sensoren sind gerade nicht verfügbar. Integration in Home Assistant prüfen.</Alert>: <Stack gap=\"xs\">{[{ id: \"session\", label: \"Session (5 h)\", ok: status.session?.ok === true, pct: parseFloat(data.session?.state), resetsAt: data.session?.attributes?.resets_at, ms: Date.getTime(data.session?.attributes?.resets_at) - Date.now(), elapsed: Math.min(100, Math.max(0, 100 - (Date.getTime(data.session?.attributes?.resets_at) - Date.now()) / 18000000 * 100)) },{ id: \"weekly\", label: \"Woche · alle Modelle\", ok: status.weekly?.ok === true, pct: parseFloat(data.weekly?.state), resetsAt: data.weekly?.attributes?.resets_at, ms: Date.getTime(data.weekly?.attributes?.resets_at) - Date.now(), elapsed: Math.min(100, Math.max(0, 100 - (Date.getTime(data.weekly?.attributes?.resets_at) - Date.now()) / 604800000 * 100)) },{ id: \"model\", label: \"Woche · \" + (data.model?.attributes?.model ?? options.modelLimit), ok: status.model?.ok === true && (options.modelLimit ?? \"\") !== \"\", pct: parseFloat(data.model?.state), resetsAt: data.model?.attributes?.resets_at, ms: Date.getTime(data.model?.attributes?.resets_at) - Date.now(), elapsed: Math.min(100, Math.max(0, 100 - (Date.getTime(data.model?.attributes?.resets_at) - Date.now()) / 604800000 * 100)) }].filter((l) => l.ok && isFinite(l.pct)).map((l) =><Card key={l.id} withBorder radius=\"md\" padding=\"sm\" shadow=\"sm\"><Stack gap={6}><Group justify=\"space-between\" wrap=\"nowrap\"><Text size=\"sm\" fw={600} truncate>{l.label}</Text><Group gap={6} wrap=\"nowrap\">{isFinite(l.elapsed) ? <Badge size=\"xs\" variant=\"light\" tt=\"none\" color={l.pct - l.elapsed >= 1 ? \"orange\" : l.pct - l.elapsed <= -1 ? \"green\" : \"gray\"}>{l.pct - l.elapsed >= 1 ? \"+\" + Math.round(l.pct - l.elapsed) + \" % über Tempo\" : l.pct - l.elapsed <= -1 ? Math.round(l.elapsed - l.pct) + \" % unter Tempo\" : \"im Tempo\"}</Badge> : null}<Text size=\"sm\" fw={700} c={l.pct >= 90 ? \"red\" : l.pct >= 75 ? \"orange\" : \"green\"}>{Math.round(l.pct) + \" %\"}</Text></Group></Group><Progress value={Math.min(100, Math.max(0, l.pct))} color={l.pct >= 90 ? \"red\" : l.pct >= 75 ? \"orange\" : \"green\"} size=\"lg\" radius=\"xl\" />{isFinite(l.elapsed) ? <Progress value={l.elapsed} color=\"gray\" size={4} radius=\"xl\" /> : null}<Group justify=\"space-between\" wrap=\"nowrap\"><Text size=\"xs\" c=\"dimmed\">{!isFinite(l.ms) ? \"Reset unbekannt\" : l.ms <= 0 ? \"Reset steht an\" : l.ms >= 86400000 ? \"Reset in \" + Math.floor(l.ms / 86400000) + \" T \" + Math.floor((l.ms % 86400000) / 3600000) + \" h\" : \"Reset in \" + Math.floor(l.ms / 3600000) + \" h \" + Math.floor((l.ms % 3600000) / 60000) + \" min\"}</Text><Text size=\"xs\" c=\"dimmed\">{l.resetsAt ? Date.toLocaleString(l.resetsAt, \"de-DE\", \"Europe/Berlin\") : \"\"}</Text></Group></Stack></Card>)}{status.extra?.ok === true && isFinite(parseFloat(data.extra?.state)) ?<Card withBorder radius=\"md\" padding=\"sm\" shadow=\"sm\"><Stack gap={6}><Group justify=\"space-between\" wrap=\"nowrap\"><Text size=\"sm\" fw={600}>Extra Usage</Text><Text size=\"sm\" fw={700}>{Math.round(parseFloat(data.extra.state)) + \" %\"}</Text></Group><Progress value={Math.min(100, Math.max(0, parseFloat(data.extra.state)))} color=\"grape\" size=\"lg\" radius=\"xl\" /></Stack></Card>: null}</Stack>}</Stack>"
+}
