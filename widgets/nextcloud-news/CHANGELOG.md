@@ -5,6 +5,14 @@ Alle nennenswerten Änderungen an diesem Widget werden in dieser Datei dokumenti
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 die Versionierung an [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.1] – 2026-11-05
+
+### Behoben
+- Button **„Angezeigte gelesen“** war ausgegraut, weil Homarr keine Array-Parameter (`itemIds`) akzeptiert. `markShownRead` nutzt jetzt `POST /api/v1-3/items/read` mit einem einzelnen Wert `newestItemId` im Body. Der vorherige Versuch mit `PUT` auf `v1-2` endete mit Fehler 405.
+
+### Geändert
+- Die Liste zeigt jetzt die **ältesten** ungelesenen Artikel zuerst (`oldestFirst: true`). Nur so trifft `newestItemId` genau die angezeigten Artikel.
+
 ## [1.2.0] – 2026-11-05
 
 ### Geändert

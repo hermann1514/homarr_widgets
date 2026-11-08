@@ -6,7 +6,7 @@ Eigene Widgets für das Dashboard [Homarr](https://homarr.dev), im Format `homar
 
 | Widget | Was es zeigt | Version |
 |---|---|---|
-| [Nextcloud News](widgets/nextcloud-news/) | Ungelesene Artikel aus Nextcloud News, direkt als gelesen markierbar | 1.2.0 |
+| [Nextcloud News](widgets/nextcloud-news/) | Ungelesene Artikel aus Nextcloud News, direkt als gelesen markierbar | 1.2.1 |
 | [Kopia Info](widgets/kopia-info/) | Status des Kopia-Backup-Servers: Repository, Quellen, letzter und nächster Snapshot | 1.0.0 |
 | [Karakeep](widgets/karakeep/) | Die neuesten Lesezeichen aus Karakeep | 1.0.0 |
 

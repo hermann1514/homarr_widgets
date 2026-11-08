@@ -2,9 +2,9 @@
 
 <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextcloud.svg" alt="Nextcloud" width="48" align="right" />
 
-Zeigt die **20 neuesten ungelesenen Artikel** aus der [Nextcloud-News-App](https://apps.nextcloud.com/apps/news) auf deinem Homarr-Board.
+Zeigt die **20 ältesten ungelesenen Artikel** aus der [Nextcloud-News-App](https://apps.nextcloud.com/apps/news) auf deinem Homarr-Board.
 
-**Datei:** [`nextcloud-news.json`](nextcloud-news.json) · **Version:** 1.2.0 · [Changelog](CHANGELOG.md)
+**Datei:** [`nextcloud-news.json`](nextcloud-news.json) · **Version:** 1.2.1 · [Changelog](CHANGELOG.md)
 
 ## Funktionen
 
@@ -59,7 +59,7 @@ Zeigt die **20 neuesten ungelesenen Artikel** aus der [Nextcloud-News-App](https
 - **Kein automatisches Markieren beim Scrollen:** Homarrs Widget-Runtime erlaubt aus Sicherheitsgründen keine Scroll- oder Sichtbarkeits-Events. Markieren geht deshalb nur über die Buttons.
 - **Kein Veröffentlichungsdatum:** Die Template-Runtime erlaubt keine `new Date(...)`-Ausdrücke.
 - **Limit für Aktionen:** Homarr erlaubt höchstens 10 Aktionen pro Minute und Nutzer.
-- **POST oder PUT:** Die Buttons nutzen `POST` auf die Nextcloud-News-API `v1-3`. Meldet Homarr beim Markieren einen Fehler 405, stelle `method` bei `markRead` und `markShownRead` auf `PUT` um.
+- **POST statt PUT:** `markRead` und `markShownRead` nutzen `POST` auf die Nextcloud-News-API `v1-3`. Die ältere API `v1-2` erwartet `PUT`, was über Homarr zu Fehler 405 führen kann.
 
 ## Verwendete API-Endpunkte
 
@@ -68,7 +68,7 @@ Zeigt die **20 neuesten ungelesenen Artikel** aus der [Nextcloud-News-App](https
 | `items` | GET | `/index.php/apps/news/api/v1-3/items` |
 | `feeds` | GET | `/index.php/apps/news/api/v1-3/feeds` |
 | `markRead` | POST | `/index.php/apps/news/api/v1-3/items/{id}/read` |
-| `markShownRead` | POST | `/index.php/apps/news/api/v1-3/items/read/multiple` |
+| `markShownRead` | POST | `/index.php/apps/news/api/v1-3/items/read` (Body: `newestItemId`) |
 
 ---
 
