@@ -5,6 +5,11 @@ Alle nennenswerten Änderungen an diesem Widget werden in dieser Datei dokumenti
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 die Versionierung an [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.3.0] – 2026-11-12
+
+### Geändert
+- Die Einträge werden in einem eigenen scrollbaren Bereich (`ScrollArea`) angezeigt. Überschrift und Button **„Angezeigte gelesen“** bleiben immer sichtbar.
+
 ## [1.2.1] – 2026-11-05
 
 ### Behoben
