@@ -10,6 +10,7 @@ Eigene Widgets für das Dashboard [Homarr](https://homarr.dev), im Format `homar
 | [Kopia Info](widgets/kopia-info/) | Status des Kopia-Backup-Servers: Repository, Quellen, letzter und nächster Snapshot | 1.0.0 |
 | [Karakeep](widgets/karakeep/) | Die neuesten Lesezeichen aus Karakeep | 1.0.0 |
 | [Claude Usage](widgets/claude-usage/) | Verbrauch des Claude-Abos: Session-, Wochen- und Modell-Limit, über Home Assistant | 1.0.0 |
+| [HA Verlaufsdiagramm](widgets/ha-history-chart/) | Verlauf beliebiger Home-Assistant-Entitäten als Diagramm | 1.0.0 |
 
 ### Nextcloud News
 
@@ -41,6 +42,14 @@ Mehr Details und Anpassungen: [README des Widgets](widgets/karakeep/README.md)
 - Extra Usage, wenn aktiviert, und Hinweis bei API-Fehlern.
 
 Mehr Details und Anpassungen: [README des Widgets](widgets/claude-usage/README.md)
+
+### HA Verlaufsdiagramm
+
+- Bis zu 8 Serien als Linie, Fläche, Stufe oder Balken, über 1 Stunde bis 30 Tage.
+- Pro Serie Umrechnung mit Faktor und Offset, eigene Einheit, zweite Y-Achse und Referenzlinien.
+- Legende mit aktuellem Wert, Minimum, Durchschnitt und Maximum.
+
+Mehr Details, alle Einstellungen und Beispiele: [README des Widgets](widgets/ha-history-chart/README.md)
 
 ## Widget importieren
 
@@ -158,6 +167,20 @@ Homarr kann die OAuth-Tokens von Anthropic nicht selbst erneuern. Deshalb holt d
 1. **hass-claude-usage** über HACS installieren, die Integration *Claude Usage* hinzufügen und per OAuth bei Claude anmelden. Das Abfrageintervall auf 300 Sekunden lassen, sonst sperrt Anthropic die Usage-API für etwa 24 Stunden.
 2. Unter *Profil → Sicherheit → Langlebige Zugangs-Token* ein Token erstellen.
 3. Unter *Einstellungen → Entitäten* nach `claude` suchen und das Präfix der Sensoren ablesen, z. B. `claude_usage_my_account` aus `sensor.claude_usage_my_account_session_limit_usage`. Es kommt in die Widget-Option *Präfix der Sensoren*.
+
+**In Homarr unter *Quellen konfigurieren***
+
+| Feld | Wert |
+|---|---|
+| Adresse | Adresse von Home Assistant ohne `/` am Ende, z. B. `https://homeassistant.example.com` |
+| Authentifizierung | *Bearer* (Voreinstellung) |
+| Token | das langlebige Zugangs-Token |
+
+### HA Verlaufsdiagramm
+
+Das Widget liest die Langzeitstatistik von Home Assistant. Gezeichnete Entitäten brauchen deshalb eine `state_class`.
+
+**In Home Assistant vorbereiten:** Unter *Profil → Sicherheit → Langlebige Zugangs-Token* ein Token erstellen.
 
 **In Homarr unter *Quellen konfigurieren***
 

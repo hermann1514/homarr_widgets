@@ -2,6 +2,11 @@
 
 Änderungen am Aufbau des Repos. Änderungen an einzelnen Widgets stehen im jeweiligen `widgets/<widget-name>/CHANGELOG.md`.
 
+## 2026-11-12
+
+### Hinzugefügt
+- Widget **HA Verlaufsdiagramm** in [`widgets/ha-history-chart/`](widgets/ha-history-chart/).
+
 ## 2026-11-07
 
 ### Hinzugefügt

@@ -1,0 +1,430 @@
+{
+  "$schema": "homarr-custom-widget-v2",
+  "name": "HA Verlaufsdiagramm",
+  "description": "Verlauf beliebiger Home-Assistant-Entitäten als Diagramm, auf Basis der Langzeitstatistik (recorder.get_statistics).",
+  "iconUrl": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/home-assistant.svg",
+  "sources": {
+    "default": {
+      "name": "Home Assistant",
+      "baseUrl": "https://homeassistant.example.com",
+      "networkScope": "private",
+      "auth": "bearer"
+    }
+  },
+  "requests": {
+    "stats": {
+      "source": "default",
+      "kind": "query",
+      "method": "POST",
+      "path": "/api/services/recorder/get_statistics",
+      "trigger": "manual",
+      "query": {
+        "return_response": true
+      },
+      "body": {
+        "start_time": {
+          "$param": "start"
+        },
+        "period": {
+          "$param": "period"
+        },
+        "types": [
+          {
+            "$param": "agg"
+          },
+          "mean",
+          "min",
+          "max"
+        ],
+        "statistic_ids": [
+          {
+            "$param": "e0"
+          },
+          {
+            "$param": "e1"
+          },
+          {
+            "$param": "e2"
+          },
+          {
+            "$param": "e3"
+          },
+          {
+            "$param": "e4"
+          },
+          {
+            "$param": "e5"
+          },
+          {
+            "$param": "e6"
+          },
+          {
+            "$param": "e7"
+          }
+        ]
+      },
+      "auth": "inherit",
+      "permission": "view"
+    },
+    "summary": {
+      "source": "default",
+      "kind": "query",
+      "method": "POST",
+      "path": "/api/services/recorder/get_statistics",
+      "trigger": "manual",
+      "query": {
+        "return_response": true
+      },
+      "body": {
+        "start_time": {
+          "$param": "start"
+        },
+        "period": {
+          "$param": "period"
+        },
+        "types": [
+          {
+            "$param": "agg"
+          },
+          "mean",
+          "min",
+          "max"
+        ],
+        "statistic_ids": [
+          {
+            "$param": "e0"
+          },
+          {
+            "$param": "e1"
+          },
+          {
+            "$param": "e2"
+          },
+          {
+            "$param": "e3"
+          },
+          {
+            "$param": "e4"
+          },
+          {
+            "$param": "e5"
+          },
+          {
+            "$param": "e6"
+          },
+          {
+            "$param": "e7"
+          }
+        ]
+      },
+      "auth": "inherit",
+      "permission": "view"
+    },
+    "current": {
+      "source": "default",
+      "kind": "query",
+      "method": "GET",
+      "path": "/api/history/period/{param:start}",
+      "trigger": "manual",
+      "query": {
+        "filter_entity_id": {
+          "$param": "ids"
+        },
+        "minimal_response": true
+      },
+      "auth": "inherit",
+      "permission": "view"
+    }
+  },
+  "options": {
+    "title": {
+      "label": "Titel",
+      "control": "text",
+      "default": "FRITZ!Box Durchsatz",
+      "group": "Allgemein"
+    },
+    "icon": {
+      "label": "Icon",
+      "description": "Icon neben dem Titel. Leer lassen für kein Icon.",
+      "control": "icon",
+      "default": "",
+      "group": "Allgemein"
+    },
+    "series": {
+      "label": "Serien (JSON)",
+      "description": "Liste mit 1 bis 8 Einträgen. Pflicht: entity_id. Optional: name, color, factor, offset, unit, decimals, dash (solid/dashed/dotted), fill (true/false), axis (primary/secondary), reference (true = waagerechte Linie mit dem aktuellen Wert).",
+      "control": "json",
+      "default": [
+        {
+          "entity_id": "sensor.fritz_box_7590_download_throughput",
+          "name": "Download",
+          "color": "blue.6",
+          "factor": 0.008,
+          "unit": "Mbit/s",
+          "decimals": 2,
+          "fill": true
+        },
+        {
+          "entity_id": "sensor.fritz_box_7590_upload_throughput",
+          "name": "Upload",
+          "color": "green.6",
+          "factor": 0.008,
+          "unit": "Mbit/s",
+          "decimals": 2,
+          "fill": true
+        },
+        {
+          "entity_id": "sensor.fritz_box_7590_max_connection_download_throughput",
+          "name": "Max. Download",
+          "color": "blue.3",
+          "factor": 0.001,
+          "unit": "Mbit/s",
+          "decimals": 1,
+          "reference": true
+        },
+        {
+          "entity_id": "sensor.fritz_box_7590_max_connection_upload_throughput",
+          "name": "Max. Upload",
+          "color": "green.3",
+          "factor": 0.001,
+          "unit": "Mbit/s",
+          "decimals": 1,
+          "reference": true
+        }
+      ],
+      "group": "Daten"
+    },
+    "range": {
+      "label": "Zeitraum",
+      "control": "select",
+      "default": "24",
+      "choices": [
+        {
+          "label": "1 Stunde",
+          "value": "1"
+        },
+        {
+          "label": "6 Stunden",
+          "value": "6"
+        },
+        {
+          "label": "24 Stunden",
+          "value": "24"
+        },
+        {
+          "label": "48 Stunden",
+          "value": "48"
+        },
+        {
+          "label": "7 Tage",
+          "value": "168"
+        },
+        {
+          "label": "30 Tage",
+          "value": "720"
+        }
+      ],
+      "group": "Daten"
+    },
+    "resolution": {
+      "label": "Auflösung",
+      "description": "Länge einer Periode. Automatisch wählt die feinste Auflösung, die das Rechenlimit von Homarr noch zulässt.",
+      "control": "select",
+      "default": "auto",
+      "choices": [
+        {
+          "label": "Automatisch",
+          "value": "auto"
+        },
+        {
+          "label": "5 Minuten",
+          "value": "5minute"
+        },
+        {
+          "label": "1 Stunde",
+          "value": "hour"
+        },
+        {
+          "label": "1 Tag",
+          "value": "day"
+        }
+      ],
+      "group": "Daten"
+    },
+    "aggregation": {
+      "label": "Aggregation pro Periode",
+      "description": "Mittelwert, Minimum und Maximum gibt es für Messwerte (state_class measurement). Zählerstand und Zuwachs gibt es nur für Zähler (total, total_increasing).",
+      "control": "select",
+      "default": "mean",
+      "choices": [
+        {
+          "label": "Mittelwert (avg)",
+          "value": "mean"
+        },
+        {
+          "label": "Minimum (min)",
+          "value": "min"
+        },
+        {
+          "label": "Maximum (max)",
+          "value": "max"
+        },
+        {
+          "label": "Zählerstand (last)",
+          "value": "state"
+        },
+        {
+          "label": "Zuwachs je Periode",
+          "value": "change"
+        }
+      ],
+      "group": "Daten"
+    },
+    "refresh": {
+      "label": "Aktualisierung (Sekunden)",
+      "control": "number",
+      "default": 60,
+      "min": 10,
+      "max": 3600,
+      "step": 10,
+      "group": "Daten"
+    },
+    "timeZone": {
+      "label": "Zeitzone",
+      "description": "Für die Beschriftung der Zeitachse und die Tagesgrenzen.",
+      "control": "timeZone",
+      "default": "Europe/Berlin",
+      "group": "Daten"
+    },
+    "chartType": {
+      "label": "Diagrammtyp",
+      "control": "select",
+      "default": "line",
+      "choices": [
+        {
+          "label": "Linie (Füllung pro Serie über \"fill\")",
+          "value": "line"
+        },
+        {
+          "label": "Fläche",
+          "value": "area"
+        },
+        {
+          "label": "Stufe",
+          "value": "step"
+        },
+        {
+          "label": "Balken",
+          "value": "bar"
+        }
+      ],
+      "group": "Darstellung"
+    },
+    "lineWidth": {
+      "label": "Linienstärke",
+      "control": "number",
+      "default": 2,
+      "min": 1,
+      "max": 6,
+      "step": 0.5,
+      "group": "Darstellung"
+    },
+    "height": {
+      "label": "Höhe des Diagramms (px)",
+      "control": "number",
+      "default": 220,
+      "min": 60,
+      "max": 1200,
+      "step": 10,
+      "group": "Darstellung"
+    },
+    "grid": {
+      "label": "Raster anzeigen",
+      "control": "switch",
+      "default": true,
+      "group": "Darstellung"
+    },
+    "tooltip": {
+      "label": "Tooltip beim Hovern",
+      "control": "switch",
+      "default": true,
+      "group": "Darstellung"
+    },
+    "legend": {
+      "label": "Legende anzeigen",
+      "control": "switch",
+      "default": true,
+      "group": "Legende"
+    },
+    "legendStats": {
+      "label": "Statistik in der Legende",
+      "control": "multiSelect",
+      "default": [
+        "cur",
+        "avg",
+        "max"
+      ],
+      "choices": [
+        {
+          "label": "Aktuell",
+          "value": "cur"
+        },
+        {
+          "label": "Minimum",
+          "value": "min"
+        },
+        {
+          "label": "Durchschnitt",
+          "value": "avg"
+        },
+        {
+          "label": "Maximum",
+          "value": "max"
+        }
+      ],
+      "group": "Legende"
+    },
+    "unit": {
+      "label": "Einheit der Y-Achse",
+      "description": "Steht hinter den Achsenwerten. Kurz halten oder leer lassen.",
+      "control": "text",
+      "default": "",
+      "group": "Y-Achse"
+    },
+    "yMin": {
+      "label": "Y-Minimum (leer = automatisch)",
+      "control": "text",
+      "default": "",
+      "group": "Y-Achse"
+    },
+    "yMax": {
+      "label": "Y-Maximum (leer = automatisch)",
+      "control": "text",
+      "default": "",
+      "group": "Y-Achse"
+    },
+    "unit2": {
+      "label": "Einheit der zweiten Y-Achse",
+      "description": "Die zweite Achse erscheint, sobald eine Serie \"axis\": \"secondary\" hat.",
+      "control": "text",
+      "default": "",
+      "group": "Zweite Y-Achse",
+      "advanced": true
+    },
+    "yMin2": {
+      "label": "Y-Minimum der zweiten Achse",
+      "control": "text",
+      "default": "",
+      "group": "Zweite Y-Achse",
+      "advanced": true
+    },
+    "yMax2": {
+      "label": "Y-Maximum der zweiten Achse",
+      "control": "text",
+      "default": "",
+      "group": "Zweite Y-Achse",
+      "advanced": true
+    }
+  },
+  "template": "<Stack gap=\"xs\" p=\"sm\">\n<Group justify=\"space-between\" wrap=\"nowrap\" gap=\"xs\">\n<Group gap={6} wrap=\"nowrap\">\n{options.icon ? (options.icon.startsWith(\"http\") || options.icon.startsWith(\"/\") ? <Image src={options.icon} w={18} h={18} /> : <TablerIcon name={options.icon} size={18} />) : null}\n<Text fw={700} size=\"sm\" truncate>{options.title}</Text>\n</Group>\n<Badge size=\"xs\" variant=\"light\" color=\"gray\" tt=\"none\">{({ \"1\": \"1 h\", \"6\": \"6 h\", \"24\": \"24 h\", \"48\": \"48 h\", \"168\": \"7 Tage\", \"720\": \"30 Tage\" })[options.range]}</Badge>\n</Group>\n{/* Einstellung \"Serien\" prüfen */}\n{!Array.isArray(options.series) || options.series.length === 0 ? (\n<Alert color=\"red\" title=\"Serien: ungültige Einstellung\">{\"Erwartet wird eine JSON-Liste mit mindestens einem Eintrag, z. B. [{\\\"entity_id\\\": \\\"sensor.beispiel\\\"}]\"}</Alert>\n) : options.series.length > 8 ? (\n<Alert color=\"red\" title=\"Serien: zu viele Einträge\">{\"Maximal 8 Serien pro Widget, konfiguriert sind \" + options.series.length + \".\"}</Alert>\n) : options.series.some((s) => typeof s?.entity_id !== \"string\" || s.entity_id.split(\".\").length !== 2 || s.entity_id.includes(\",\") || s.entity_id.includes(\" \")) ? (\n<Alert color=\"red\" title=\"Serien: entity_id fehlt oder ist ungültig\">{\"Eintrag \" + (options.series.findIndex((s) => typeof s?.entity_id !== \"string\" || s.entity_id.split(\".\").length !== 2 || s.entity_id.includes(\",\") || s.entity_id.includes(\" \")) + 1) + \" braucht eine \\\"entity_id\\\" wie \\\"sensor.beispiel\\\".\"}</Alert>\n) : (\n/* Die Runtime kennt keine Variablen. Deshalb läuft die Berechnung als Kette von Stufen 0 bis 8: jede Stufe ergänzt das Objekt c, Stufe 8 zeichnet. */\n[0, 1, 2, 3, 4, 5, 6, 7, 8].reduce((c, i) =>\ni === 8 ? (\n<>\n{/* Abfragen: Statistik für das Diagramm, grobe Statistik für die Legende, aktuelle Werte */}\n<SubFetch requestId=\"stats\" refreshInterval={Math.max(30, options.refresh)} params={{ start: c.start, period: c.per, agg: c.g, e0: c.ids[0], e1: c.ids[1] ?? c.ids[0], e2: c.ids[2] ?? c.ids[0], e3: c.ids[3] ?? c.ids[0], e4: c.ids[4] ?? c.ids[0], e5: c.ids[5] ?? c.ids[0], e6: c.ids[6] ?? c.ids[0], e7: c.ids[7] ?? c.ids[0] }} />\n{c.two ? <SubFetch requestId=\"summary\" refreshInterval={Math.max(30, options.refresh)} params={{ start: c.sst, period: c.per === \"5minute\" ? \"hour\" : \"day\", agg: c.g, e0: c.ids[0], e1: c.ids[1] ?? c.ids[0], e2: c.ids[2] ?? c.ids[0], e3: c.ids[3] ?? c.ids[0], e4: c.ids[4] ?? c.ids[0], e5: c.ids[5] ?? c.ids[0], e6: c.ids[6] ?? c.ids[0], e7: c.ids[7] ?? c.ids[0] }} /> : null}\n<SubFetch requestId=\"current\" refreshInterval={Math.max(10, options.refresh)} params={{ start: Date.toISOString(c.hr - 300000), ids: c.ids.join(\",\") }} />\n{status.stats == null || (status.stats?.loading && data.stats == null) ? (\n<Skeleton height={options.height} radius=\"md\" />\n) : status.stats?.ok === false || status.stats?.error != null ? (\n<Alert color=\"red\" title=\"Keine Daten von Home Assistant\">{\nstatus.stats?.status === 401 || status.stats?.status === 403 ? \"Home Assistant lehnt das Token ab (\" + status.stats?.status + \"). Token unter „Quellen konfigurieren“ prüfen.\"\n: status.stats?.status === 400 ? \"Home Assistant lehnt die Abfrage ab (400). Die entity_id der Serien prüfen.\"\n: status.stats?.status >= 404 && status.stats?.status < 500 ? \"Home Assistant antwortet mit Fehler \" + status.stats?.status + \". Adresse unter „Quellen konfigurieren“ prüfen.\"\n: \"Home Assistant ist nicht erreichbar\" + (status.stats?.status > 0 ? \" (Fehler \" + status.stats?.status + \")\" : \"\") + \". Adresse und Netzwerk prüfen.\"\n}</Alert>\n) : (\n<>\n{c.D.some((p) => !p.found) ? <Alert color=\"orange\" p=\"xs\">{\"Entität nicht gefunden: \" + c.D.filter((p) => !p.found).map((p) => p.id).join(\", \")}</Alert> : null}\n{c.D.some((p) => !p.ref && p.found && !p.ok) ? <Alert color=\"yellow\" p=\"xs\">{\"Keine Statistik für: \" + c.D.filter((p) => !p.ref && p.found && !p.ok).map((p) => p.id).join(\", \") + \". Die Entität braucht in Home Assistant eine state_class, und die Aggregation muss dazu passen. Alternativ \\\"reference\\\": true setzen.\"}</Alert> : null}\n{status.current?.ok === false ? <Alert color=\"yellow\" p=\"xs\">Aktuelle Werte sind nicht abrufbar. Referenzlinien und Namen fehlen deshalb.</Alert> : null}\n{c.PL.length === 0 && c.RF.length === 0 ? (\n<Alert color=\"gray\" p=\"xs\">Keine Daten im gewählten Zeitraum.</Alert>\n) : (\n<CompositeChart\nh={options.height}\ndataKey=\"x\"\ndata={c.rows}\nseries={c.PL.map((p) => ({ name: p.key, label: p.name + (p.unit ? \" (\" + p.unit + \")\" : \"\"), color: p.color, type: p.type, strokeDasharray: p.dash, yAxisId: p.sec ? \"right\" : undefined }))}\nreferenceLines={c.RF.map((p) => ({ y: p.cur, color: p.color, strokeDasharray: \"6 4\", ifOverflow: \"extendDomain\", yAxisId: p.sec ? \"right\" : undefined }))}\ncurveType={options.chartType === \"step\" ? \"stepAfter\" : \"linear\"}\nstrokeWidth={options.lineWidth}\nconnectNulls={false}\nwithDots={false}\nwithLegend={false}\nwithTooltip={options.tooltip}\ntooltipAnimationDuration={0}\ngridAxis={options.grid ? \"xy\" : \"none\"}\nwithRightYAxis={c.D.some((p) => p.sec)}\nxAxisProps={{ minTickGap: 28 }}\nyAxisProps={{ domain: [isFinite(c.y0) ? c.y0 : \"auto\", isFinite(c.y1) ? c.y1 : \"auto\"], allowDataOverflow: isFinite(c.y0) || isFinite(c.y1), unit: options.unit ? \" \" + options.unit : undefined }}\nrightYAxisProps={{ domain: [isFinite(c.y2) ? c.y2 : \"auto\", isFinite(c.y3) ? c.y3 : \"auto\"], allowDataOverflow: isFinite(c.y2) || isFinite(c.y3), unit: options.unit2 ? \" \" + options.unit2 : undefined }}\n/>\n)}\n{options.legend ? (\n<Group gap=\"md\" wrap=\"wrap\">\n{c.D.filter((p) => p.ok || p.ref).map((p) => (\n<Group key={p.id + p.k} gap={6} wrap=\"nowrap\">\n<Box w={p.ref ? 14 : 10} h={p.ref ? 3 : 10} bg={p.color} style={{ borderRadius: 2, flexShrink: 0 }} />\n<Text size=\"xs\" fw={600}>{p.name}</Text>\n<Text size=\"xs\" c=\"dimmed\">{p.lg}</Text>\n</Group>\n))}\n</Group>\n) : null}\n</>\n)}\n</>\n)\n: i === 5 ? {\n/* Stufe 5: pro Serie Rohdaten (j=0), Hilfswerte (j=1), Perioden für die Legende (j=2), Statistik und Werte (j=3), Ergebnis (j=4) */\n...c,\nD: options.series.map((s, k) => [0, 1, 2, 3, 4].reduce((q, j) =>\nj === 4 ? {\nid: s.entity_id,\nk: k,\nref: q.ref,\nsec: q.sec,\nok: q.ok,\ncur: q.cur,\nfound: q.a.length > 0 || q.cu.length > 0 || status.current?.ok !== true,\nkey: \"abcdefgh\"[options.series.slice(0, k).filter((x) => x.reference !== true).length],\nname: s.name || q.cu[0]?.attributes?.friendly_name || s.entity_id,\nunit: q.unit,\ncolor: s.color || [\"blue.6\", \"green.6\", \"orange.6\", \"grape.6\", \"cyan.6\", \"red.6\", \"yellow.6\", \"teal.6\"][k],\ndash: s.dash === \"dashed\" ? \"6 4\" : s.dash === \"dotted\" ? \"2 4\" : undefined,\ntype: options.chartType === \"bar\" ? \"bar\" : (options.chartType === \"area\" ? s.fill !== false : s.fill === true) ? \"area\" : \"line\",\n/* Legendentext: Zahlen mit Komma und der Einheit der Serie */\nlg: (q.ref\n? [isFinite(q.cur) ? q.cur.toFixed(q.dec).replace(\".\", \",\") : \"–\"]\n: [\noptions.legendStats.includes(\"cur\") ? \"aktuell \" + (isFinite(q.cur) ? q.cur.toFixed(q.dec).replace(\".\", \",\") : \"–\") : null,\noptions.legendStats.includes(\"min\") ? \"min \" + (isFinite(q.mn) ? q.mn.toFixed(q.dec).replace(\".\", \",\") : \"–\") : null,\noptions.legendStats.includes(\"avg\") ? \"Ø \" + (isFinite(q.av) ? q.av.toFixed(q.dec).replace(\".\", \",\") : \"–\") : null,\noptions.legendStats.includes(\"max\") ? \"max \" + (isFinite(q.mx) ? q.mx.toFixed(q.dec).replace(\".\", \",\") : \"–\") : null\n].filter((z) => z != null)).join(\" · \") + (q.unit ? \" \" + q.unit : \"\"),\n/* Werte auf das Zeitraster legen. Lückenlos: nur vorne auffüllen. Mit Lücken: jede Periode an ihren Platz, der Rest bleibt leer. */\nw: !q.ok ? []\n: Math.floor((Date.getTime(q.a.at(-1).start) - c.tA) / c.P) - q.o1 + 1 === q.a.length\n? (q.o1 >= 0 ? Array.from({ length: q.o1 }).concat(q.v) : q.v.slice(-q.o1))\n: q.a.reduce((acc, y, n) => acc.concat(Array.from({ length: Math.floor((Date.getTime(y.start) - c.tA) / c.P) - acc.length }), [q.v[n]]), [])\n}\n: j === 3 ? {\n...q,\nunit: typeof s.unit === \"string\" ? s.unit : (q.sec ? options.unit2 : options.unit) || q.cu[0]?.attributes?.unit_of_measurement || \"\",\ncur: parseFloat((q.cu.filter((x) => isFinite(parseFloat(x.state))).at(-1) ?? {}).state) * q.f + q.o,\nmn: (q.f < 0\n? Math.max(q.F.reduce((u, x) => Math.max(u, x.max ?? x[c.g]), -Infinity), q.cc.reduce((u, x) => Math.max(u, x.max ?? x[c.g]), -Infinity))\n: Math.min(q.F.reduce((u, x) => Math.min(u, x.min ?? x[c.g]), Infinity), q.cc.reduce((u, x) => Math.min(u, x.min ?? x[c.g]), Infinity))) * q.f + q.o,\nmx: (q.f < 0\n? Math.min(q.F.reduce((u, x) => Math.min(u, x.min ?? x[c.g]), Infinity), q.cc.reduce((u, x) => Math.min(u, x.min ?? x[c.g]), Infinity))\n: Math.max(q.F.reduce((u, x) => Math.max(u, x.max ?? x[c.g]), -Infinity), q.cc.reduce((u, x) => Math.max(u, x.max ?? x[c.g]), -Infinity))) * q.f + q.o,\n/* Durchschnitt: grobe Perioden zählen c.K-fach, der noch laufende Rest der letzten (cL) wird abgezogen */\nav: (q.F.reduce((u, x) => u + (x.mean ?? x[c.g]), 0) + c.K * q.cc.reduce((u, x) => u + (x.mean ?? x[c.g]), 0) - (q.cc.length === 0 ? 0 : q.cL * (q.cc.at(-1).mean ?? q.cc.at(-1)[c.g])))\n/ (q.F.length + c.K * q.cc.length - q.cL) * q.f + q.o,\n/* Werte umrechnen und runden: Wert * Faktor + Offset */\nv: !q.ok ? [] : [q.f * q.m, q.o * q.m].reduce((fm, om) => q.a.map((x) => Math.round(x[c.g] * fm + om) / q.m)),\no1: !q.ok ? 0 : Math.floor((Date.getTime(q.a[0].start) - c.tA) / c.P)\n}\n: j === 2 ? {\n...q,\n/* F = feine Perioden für die Legende. Bei langen Zeiträumen liefert \"summary\" grobe Perioden (cc), F ist dann nur der Rest davor und danach. */\nF: q.ref || !c.st ? []\n: c.two ? (q.cc.length === 0 ? [] : q.a.slice(0, c.K).filter((x) => Date.getTime(x.start) < q.b0).concat(q.a.slice(-c.K).filter((x) => Date.getTime(x.start) >= q.bE)))\n: q.a.length <= 60 ? q.a : []\n}\n: j === 1 ? {\n...q,\nm: Math.pow(10, q.dec),\nok: !q.ref && q.a.length > 0 && q.a[0][c.g] != null,\n/* Grenzen der groben Perioden: b0 = Beginn der ersten, bE = Ende der letzten, cL = deren noch nicht abgelaufener Teil in feinen Perioden */\nb0: q.cc.length === 0 ? 0 : Date.getTime(q.cc[0].start),\nbE: q.cc.length === 0 ? 0 : Date.getTime(q.cc.at(-1).end),\ncL: q.cc.length === 0 ? 0 : Math.max(0, Date.getTime(q.cc.at(-1).end) - c.hr) / c.P\n}\n: {\na: c.ST[s.entity_id] ?? [],\ncc: c.two && s.reference !== true ? c.SM[s.entity_id] ?? [] : [],\ncu: c.CU.find((l) => l[0]?.entity_id === s.entity_id) ?? [],\nf: typeof s.factor === \"number\" ? s.factor : 1,\no: typeof s.offset === \"number\" ? s.offset : 0,\ndec: typeof s.decimals === \"number\" ? Math.max(0, Math.min(6, Math.round(s.decimals))) : 2,\nref: s.reference === true,\nsec: s.axis === \"secondary\"\n}, 0))\n}\n: i === 7 ? {\n/* Stufe 7: eine Zeile pro Periode für das Diagramm. Bis 4 Serien die kurze Variante, sonst 8 Spalten. */\n...c,\nrows: [c.PL[0]?.w ?? [], c.PL[1]?.w ?? []].reduce((w0, w1) => [c.PL[2]?.w ?? [], c.PL[3]?.w ?? []].reduce((w2, w3) =>\nc.PL.length <= 4\n? c.L.map((lb, n) => ({ x: lb, a: w0[n], b: w1[n], c: w2[n], d: w3[n] }))\n: c.L.map((lb, n) => ({ x: lb, a: w0[n], b: w1[n], c: w2[n], d: w3[n], e: c.PL[4].w[n], f: c.PL[5]?.w[n], g: c.PL[6]?.w[n], h: c.PL[7]?.w[n] }))))\n}\n: i === 6 ? {\n/* Stufe 6: gezeichnete Serien (PL), Referenzlinien (RF) und Beschriftung der Zeitachse (L) */\n...c,\nPL: c.D.filter((p) => p.ok),\nRF: c.D.filter((p) => p.ref && isFinite(p.cur)),\nL: [c.first, c.P].reduce((t0, pp) => [options.timeZone, [\"So\", \"Mo\", \"Di\", \"Mi\", \"Do\", \"Fr\", \"Sa\"]].reduce((tz, wd) =>\nc.lm === 0\n? Array.from({ length: c.N }).map((u, n) => Date.toLocaleString(t0 + n * pp, \"de-DE\", tz).slice(12))\n: c.lm === 2\n? Array.from({ length: c.N }).map((u, n) => wd[Date.getDay(t0 + n * pp + pp / 2 + c.off)] + \" \" + Date.toLocaleString(t0 + n * pp + pp / 2, \"de-DE\", tz).slice(0, 6))\n: Array.from({ length: c.N }).map((u, n) => wd[Date.getDay(t0 + n * pp + c.off)] + \" \" + Date.toLocaleString(t0 + n * pp, \"de-DE\", tz).slice(12))))\n}\n: i === 4 ? {\n/* Stufe 4: Startzeit der Abfrage und Antworten. two = Legende aus groben Perioden, lm = Format der Zeitachse */\n...c,\ntA: c.first - c.P / 2,\nstart: Date.toISOString(c.first + (c.per === \"day\" ? 7200000 : 0)),\nsst: Date.toISOString(c.first + (c.per === \"hour\" ? 86400000 : 0)),\ntwo: c.per !== \"day\" && c.N > 2 * c.K && c.st && (c.g === \"mean\" || c.g === \"min\" || c.g === \"max\"),\nlm: c.per === \"day\" ? 2 : c.h <= 24 ? 0 : 1,\nST: data.stats?.service_response?.statistics ?? {},\nSM: data.summary?.service_response?.statistics ?? {},\nCU: Array.isArray(data.current) ? data.current : []\n}\n: i === 3 ? {\n/* Stufe 3: Beginn der ersten Periode und Anzahl der Perioden */\n...c,\nfirst: c.per === \"day\" ? c.hr - c.lh * 3600000 - (c.dn - 1) * 86400000 : c.hr - c.h * 3600000,\nN: c.per === \"day\" ? c.dn : Math.floor((c.now - c.hr + c.h * 3600000) / c.P)\n}\n: i === 2 ? {\n/* Stufe 2: Periodenlänge in ms, Perioden pro grober Periode, Anzahl Tage, Zeitzonen-Versatz in ms */\n...c,\nP: c.per === \"5minute\" ? 300000 : c.per === \"hour\" ? 3600000 : 86400000,\nK: c.per === \"5minute\" ? 12 : 24,\ndn: Math.max(1, Math.ceil(c.h / 24)),\noff: (c.dm > 840 ? c.dm - 1440 : c.dm < -720 ? c.dm + 1440 : c.dm) * 60000\n}\n: i === 1 ? {\n/* Stufe 1: Auflösung. Automatisch = feinste Periode, deren geschätzter Rechenaufwand unter dem Limit von Homarr bleibt */\n...c,\nper: options.resolution !== \"auto\" ? options.resolution\n: (c.h * 12 + 12) * ((c.h <= 24 ? 28 : 44) + 14 * c.nP + (c.nP > 4 ? 28 : 0)) + 1200 * c.nP <= 19500 ? \"5minute\"\n: c.h * ((c.h <= 24 ? 28 : 44) + 14 * c.nP + (c.nP > 4 ? 28 : 0)) + 1000 * c.nP <= 19500 ? \"hour\" : \"day\",\nlh: parseInt(c.lt.slice(12, 14), 10),\ndm: parseInt(c.lt.slice(12, 14), 10) * 60 + parseInt(c.lt.slice(15, 17), 10) - parseInt(c.ut.slice(12, 14), 10) * 60 - parseInt(c.ut.slice(15, 17), 10)\n}\n: {\n/* Stufe 0: Eingaben. h = Stunden, nP = gezeichnete Serien, now/hr = Zeit auf 5 min bzw. volle Stunde gerundet */\nh: Number(options.range),\nnP: Math.max(1, options.series.filter((s) => s.reference !== true).length),\nnow: Math.floor(Date.now() / 300000) * 300000,\nhr: Math.floor(Date.now() / 3600000) * 3600000,\nlt: Date.toLocaleString(Date.now(), \"de-DE\", options.timeZone),\nut: Date.toLocaleString(Date.now(), \"de-DE\", \"UTC\"),\nids: options.series.map((s) => s.entity_id),\ng: options.aggregation,\nst: options.legend === true && (options.legendStats.includes(\"min\") || options.legendStats.includes(\"avg\") || options.legendStats.includes(\"max\")),\ny0: parseFloat(String(options.yMin).replace(\",\", \".\")),\ny1: parseFloat(String(options.yMax).replace(\",\", \".\")),\ny2: parseFloat(String(options.yMin2).replace(\",\", \".\")),\ny3: parseFloat(String(options.yMax2).replace(\",\", \".\"))\n}, 0)\n)}\n</Stack>"
+}
