@@ -6,7 +6,7 @@ Zeigt die neuesten Lesezeichen aus [Karakeep](https://karakeep.app) (früher Hoa
 
 ## Funktionen
 
-- Die 5 neuesten nicht archivierten Lesezeichen als Karte mit Vorschaubild oder Favicon, Titel, Beschreibung und Datum (Europe/Berlin)
+- Die 20 neuesten nicht archivierten Lesezeichen (scrollbar, Überschrift bleibt fix) als Karte mit Vorschaubild oder Favicon, Titel, Beschreibung und Datum (Europe/Berlin)
 - Ein Klick auf einen Link öffnet die Seite in einem neuen Tab.
 - Notizen zeigen ihren Text als Vorschau, Dateien ihren Dateinamen. Beide sind nicht verlinkt.
 - Button zum Neuladen
@@ -34,7 +34,7 @@ Zeigt die neuesten Lesezeichen aus [Karakeep](https://karakeep.app) (früher Hoa
 
 | Was | Wo in der JSON-Datei | Standard |
 |---|---|---|
-| Anzahl der Lesezeichen | `requests.items.query.limit` | `5` |
+| Anzahl der Lesezeichen | `requests.items.query.limit` | `20` |
 | Archivierte mit anzeigen | `requests.items.query.archived` entfernen | nur nicht archivierte |
 | Zeitzone des Datums | `template`: `Date.toLocaleString(…, "de-DE", "Europe/Berlin")` | `Europe/Berlin` |
 

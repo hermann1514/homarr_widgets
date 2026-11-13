@@ -5,6 +5,12 @@ Alle nennenswerten Änderungen an diesem Widget werden in dieser Datei dokumenti
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 die Versionierung an [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.1.0] – 2026-11-13
+
+### Geändert
+- Die Lesezeichen werden in einem eigenen scrollbaren Bereich (`ScrollArea`) angezeigt. Die Überschrift bleibt immer sichtbar.
+- Es werden jetzt die 20 neuesten Lesezeichen geladen (vorher 5).
+
 ## [1.0.0] – 2026-11-04
 
 ### Hinzugefügt
